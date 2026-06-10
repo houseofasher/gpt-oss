@@ -5,10 +5,18 @@
 # Railway build-vs-runtime environment split that produced
 # "ModuleNotFoundError: No module named 'uvicorn'".
 #
-# Defaults to the `stub` inference backend, which needs no GPU, no torch and
-# no model weights — the only backend that can boot on a standard Railway
-# container. Override INFERENCE_BACKEND (and provide weights + a GPU) to run a
-# real model.
+# Defaults to the `remote` inference backend: the server forwards each prompt
+# (Brain Orchestrator doctrines + retrieved knowledge included) to a real
+# OpenAI-compatible LLM API and streams back a REAL answer. This is what makes
+# answers genuine on a CPU-only host like Railway, which cannot run the gpt-oss
+# weights itself.
+#
+# REQUIRED for real answers: set LLM_API_KEY on the server (Railway -> Variables).
+# Optional: LLM_BASE_URL (default https://api.openai.com/v1 — any compatible API
+# such as OpenRouter/Groq/Together/local vLLM), LLM_MODEL (default gpt-4o-mini),
+# LLM_TEMPERATURE, LLM_MAX_TOKENS.
+# Without a key, the server returns a clear "no model connected" message — never
+# a fake answer. Set INFERENCE_BACKEND=stub only for offline smoke tests.
 
 FROM python:3.12-slim
 
@@ -22,8 +30,8 @@ COPY . .
 RUN python -m pip install --upgrade pip \
     && python -m pip install .
 
-# stub = CPU-only, no weights. Boots the API and returns canned tokens.
-ENV INFERENCE_BACKEND=stub
+# remote = CPU-only, calls a real LLM API (set LLM_API_KEY). Real answers.
+ENV INFERENCE_BACKEND=remote
 ENV PORT=8000
 
 EXPOSE 8000

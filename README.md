@@ -32,6 +32,14 @@ Both models were trained using our [harmony response format][harmony] and should
 > no GPU via `python -m gpt_oss.brain.demo "<your input>"`. See
 > [docs/brain_orchestrator.md](docs/brain_orchestrator.md). Toggle with
 > `ENABLE_BRAINS=0`.
+>
+> **Real answers (important):** a CPU host like Railway cannot run the gpt-oss
+> weights, so the server defaults to the `remote` backend — it forwards each
+> prompt (brains + retrieved knowledge included) to a real OpenAI-compatible LLM
+> API and streams back the real reply. Set **`LLM_API_KEY`** on the deploy
+> (optional: `LLM_BASE_URL`, `LLM_MODEL`). Without a key it returns a clear
+> "no model connected" message — never a fake answer. The old `stub` backend
+> (`INFERENCE_BACKEND=stub`) replays canned tokens and is for offline tests only.
 
 ## Table of Contents
 - [Highlights](#highlights)
