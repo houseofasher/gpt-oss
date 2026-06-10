@@ -3,6 +3,8 @@ import datetime
 import uuid
 from typing import Callable, Literal, Optional, Union
 
+from gpt_oss.brain import compose as compose_brain_prompt
+
 from fastapi import FastAPI, Request
 from fastapi.exception_handlers import request_validation_exception_handler
 from fastapi.exceptions import RequestValidationError
@@ -95,6 +97,56 @@ def is_not_builtin_tool(
         and recipient != "python"
         and recipient != "assistant"
     )
+
+
+# Brain Orchestrator toggle. On by default; set ENABLE_BRAINS=0/false/off to
+# serve the plain model with no cognitive-region routing.
+_BRAIN_TRUE_VALUES = {"1", "true", "TRUE", "on", "ON", "yes", "YES"}
+
+
+def _brains_enabled() -> bool:
+    return os.environ.get("ENABLE_BRAINS", "1").strip() in _BRAIN_TRUE_VALUES
+
+
+def _extract_latest_user_text(body_input: Union[str, list]) -> str:
+    """Pull the current turn's user text out of a Responses-API input payload.
+
+    Returns the text of the LAST user message, since that is the turn the
+    brains should route on. Falls back to empty string if nothing is found —
+    routing then yields the always-on base voice, never a crash.
+    """
+    if isinstance(body_input, str):
+        return body_input
+    if not isinstance(body_input, list):
+        return ""
+
+    latest = ""
+    for item in body_input:
+        # Items may be pydantic models or plain dicts depending on the path.
+        item_type = getattr(item, "type", None) or (
+            item.get("type") if isinstance(item, dict) else None
+        )
+        role = getattr(item, "role", None) or (
+            item.get("role") if isinstance(item, dict) else None
+        )
+        if item_type not in (None, "message") or role != "user":
+            continue
+        content = getattr(item, "content", None)
+        if content is None and isinstance(item, dict):
+            content = item.get("content")
+        if isinstance(content, str):
+            latest = content
+        elif isinstance(content, list):
+            chunks = []
+            for c in content:
+                text = getattr(c, "text", None)
+                if text is None and isinstance(c, dict):
+                    text = c.get("text")
+                if isinstance(text, str):
+                    chunks.append(text)
+            if chunks:
+                latest = "\n".join(chunks)
+    return latest
 
 
 def create_api_server(
@@ -1194,6 +1246,22 @@ def create_api_server(
                 if body.instructions is None:
                     body.instructions = prev_req.instructions
                 body.input = merged_input
+
+        # Brain Orchestrator: route the current turn through the cognitive
+        # regions and fold the composed doctrine into the developer
+        # instructions. The user's own instructions stay highest priority
+        # (compose() appends them last). Failures degrade to plain serving —
+        # the brains must never take the API down.
+        if _brains_enabled():
+            try:
+                user_text = _extract_latest_user_text(body.input)
+                body.instructions = compose_brain_prompt(
+                    user_text,
+                    has_image=False,
+                    base_instructions=body.instructions,
+                )
+            except Exception as brain_exc:  # noqa: BLE001 - never fail the request
+                print(f"Brain Orchestrator skipped (non-fatal): {brain_exc}")
 
         system_message_content = SystemContent.new().with_conversation_start_date(
             datetime.datetime.now().strftime("%Y-%m-%d")
