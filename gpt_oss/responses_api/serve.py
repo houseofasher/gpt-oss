@@ -1,6 +1,7 @@
 # torchrun --nproc-per-node=4 serve.py
 
 import argparse
+import os
 
 import uvicorn
 from openai_harmony import (
@@ -24,16 +25,18 @@ if __name__ == "__main__":
         "--port",
         metavar="PORT",
         type=int,
-        default=8000,
-        help="Port to run the server on",
+        default=int(os.environ.get("PORT", "8000")),
+        help="Port to run the server on (defaults to $PORT or 8000)",
     )
     parser.add_argument(
         "--inference-backend",
         metavar="BACKEND",
         type=str,
         help="Inference backend to use",
-        # default to metal on macOS, triton on other platforms
-        default="metal" if __import__("platform").system() == "Darwin" else "triton",
+        default=os.environ.get(
+            "INFERENCE_BACKEND",
+            "metal" if __import__("platform").system() == "Darwin" else "triton",
+        ),
     )
     args = parser.parse_args()
 
@@ -55,4 +58,8 @@ if __name__ == "__main__":
     encoding = load_harmony_encoding(HarmonyEncodingName.HARMONY_GPT_OSS)
 
     infer_next_token = setup_model(args.checkpoint)
-    uvicorn.run(create_api_server(infer_next_token, encoding), port=args.port)
+    uvicorn.run(
+        create_api_server(infer_next_token, encoding),
+        host="0.0.0.0",
+        port=args.port,
+    )
