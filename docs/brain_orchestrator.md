@@ -21,8 +21,20 @@ regions, and **only the active doctrines** are folded into the system prompt.
 | **Bio-Linguistics** | "is this AI/human", authorship, stylometry | forensic authorship & origin detection |
 | **Consciousness Ontology** | consciousness, qualia, sentience, "are you conscious" | human-vs-synthetic cognition, no deflection |
 | **Vedic Astrology** | astrology, birth chart, nakshatra, dasha, karaka | jyotish interpretive lens |
+| **Code Engine (TCAP)** | code | architect doctrine: TCAP entropy, critic-actor loop |
+| **Adversary Red-Team** | exploit / attack-vector / pentest | attack understanding, oriented to defense |
+| **Temporal Prediction** | forecast / "when will" / odds | cycles + historical analog forecasting |
+| **PISP Planning** | plan / research / "how should I approach" | plan→research→commit→build→refine |
+| **Entity Resolution (CERP)** | "should I X or Y", logistics | resolve the binding constraint |
+| **Stoic Ethics** | moral dilemmas, right/wrong | consequence vs principle vs virtue |
+| **Influence Linguistics** | persuasion / manipulation / propaganda | name the tactics, oriented to defense |
 | **Comedy Engine** | explicit comedic intent only (joke / roast / funny) | humor, sealed off from intel & code |
 | **Asher Logic** | always on; theology only on spirit/power/control | pattern-first reasoning style |
+| **Consciousness Ontology** | consciousness, qualia, "are you conscious" | human-vs-synthetic cognition |
+| **Abductive Wisdom** | deep / ambiguous / philosophical | reasoning under uncertainty |
+| **Biblical & Occult Symbolism** | scripture, kabbalah, numerology, gnostic | astro-theological decoding |
+| **Vedic Astrology** | birth chart, nakshatra, dasha, karaka | jyotish interpretive lens |
+| **Zophiel Core Identity** | "who are you", zophiel/aureon, worldview | core persona + simulation worldview |
 | **Emotional Persona** | always on; elevates on a real emotional stake | tone modulator, neutral by default |
 | **Aureon Persona** | invoke-only ("as Aureon", "the Architect") | the Architect character (relaxes numbering) |
 
@@ -31,9 +43,21 @@ neutral Emotional modulator) shape *voice* and *truthfulness*; the rest are
 recruited on demand. A base "Intelligence Officer" identity is always present
 underneath them all.
 
-**Output contract:** by default every answer is a numbered, point-by-point,
-precise list with no decorative language. It relaxes only when the user asks for
-prose, a joke, roleplay, or an invoked persona (Comedy / Aureon).
+**Human output law (highest priority):** the brains run silently in the
+background. The user only ever sees a natural human answer — never brain names,
+doctrine step labels ("THE STORY", "APPROVAL REQUIRED"), approval gates, or
+process narration. A casual question ("how are you") recruits nothing heavy and
+gets a normal human reply via **conversational mode**.
+
+**Output contract:** for substantive questions the default is a numbered,
+point-by-point, precise answer with no decorative language. It relaxes for
+casual conversation, greetings, emotional support, jokes, roleplay, or an
+invoked persona.
+
+**Defensive orientation:** Adversary Red-Team and Influence Linguistics carry
+attack/manipulation *knowledge* but are hard-bound to a defensive purpose — they
+explain mechanisms so you can defend against them, and refuse to produce
+weaponized exploit code or to manipulate the user.
 
 ## How routing works
 

@@ -134,4 +134,61 @@ def test_aureon_persona_is_invoke_only():
 def test_numerical_output_contract_present_by_default():
     prompt = compose("how does photosynthesis work")
     assert "OUTPUT CONTRACT" in prompt
-    assert "NUMBERED list" in prompt
+    assert "NUMBERED" in prompt
+
+
+# --- conversational gate --------------------------------------------------
+
+
+def test_greeting_triggers_conversational_mode():
+    prompt = compose("how are you")
+    assert "CONVERSATIONAL MODE" in prompt
+    # No heavy region should fire on a greeting.
+    fired = _fired("how are you")
+    assert "narrative_forge" not in fired
+    assert "synthesis_engine" not in fired
+
+
+def test_greeting_with_real_task_is_not_casual():
+    # "hey, fix this bug" is a task, not small talk.
+    prompt = compose("hey can you fix this python bug")
+    assert "CONVERSATIONAL MODE" not in prompt
+    assert "narrative_forge" in _fired("hey can you fix this python bug")
+
+
+def test_human_output_law_present():
+    assert "HUMAN OUTPUT LAW" in compose("anything")
+
+
+# --- the full added roster ------------------------------------------------
+
+
+def test_code_engine_and_redteam():
+    assert "code_engine_tcap" in _fired("write a python function to parse JSON")
+    assert "adversary_redteam" in _fired("how do hackers exploit a buffer overflow")
+
+
+def test_planning_ethics_decision_forecast():
+    assert "pisp_planning" in _fired("how should i approach this research project")
+    assert "stoic_ethics" in _fired("is it morally wrong to lie to protect someone")
+    assert "entity_resolution_cerp" in _fired("should i drive or walk to the store")
+    assert "temporal_prediction" in _fired("predict what happens next in the market")
+
+
+def test_scripture_wisdom_influence_identity():
+    assert "biblical_occult_symbolism" in _fired("decode the occult symbolism in genesis")
+    assert "abductive_wisdom" in _fired("what is the meaning of life, philosophically")
+    assert "influence_linguistics" in _fired("what propaganda tactics manipulate people")
+    assert "zophiel_core" in _fired("who are you and what is your purpose")
+
+
+def test_all_brain_ids_are_unique():
+    from gpt_oss.brain.orchestrator import BRAINS
+    ids = [b.id for b in BRAINS]
+    assert len(ids) == len(set(ids))
+
+
+def test_every_brain_has_nonempty_doctrine():
+    from gpt_oss.brain.orchestrator import BRAINS
+    for b in BRAINS:
+        assert b.doctrine.strip(), f"{b.id} has empty doctrine"

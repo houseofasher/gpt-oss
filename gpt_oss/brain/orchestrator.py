@@ -148,6 +148,81 @@ _PERSONA_FIRE = _kw(
     "channel aureon", "as the architect",
 )
 
+_PLANNING_FIRE = _kw(
+    "plan", "planning", "roadmap", "approach", "strategy", "strategize",
+    "project", "research", "where do i start", "where to start", "how should i",
+    "how do i approach", "break it down", "break this down", "scope", "milestones",
+    "design doc", "game plan", "step by step plan",
+)
+
+_ETHICS_FIRE = _kw(
+    "ethical", "ethics", "moral", "morality", "immoral", "right or wrong",
+    "wrong to", "ought to", "virtue", "justice", "is it fair", "dilemma",
+    "trolley problem", "conscience", "good or evil", "is it ok to", "is it okay to",
+    "the right thing",
+)
+
+_WISDOM_FIRE = _kw(
+    "meaning of life", "wisdom", "wise", "paradox", "philosophy", "philosophical",
+    "what should i believe", "how do i know", "makes sense of", "existential",
+    "purpose of", "what is truth", "epistemology",
+)
+
+_DECISION_FIRE = _kw(
+    "should i", "which should", "or should i", "better to", "is it worth",
+    "do i need to", "choose between", "which is better", "decide between",
+    "vs", "versus", "which one",
+)
+
+_FORECAST_FIRE = _kw(
+    "predict", "prediction", "forecast", "when will", "will there be",
+    "likelihood", "what happens next", "whats next", "what's next", "timing",
+    "odds of", "future of", "going to happen", "outlook", "trend",
+)
+
+_SCRIPTURE_FIRE = _kw(
+    "bible", "biblical", "scripture", "gospel", "genesis", "revelation",
+    "jesus", "christ", "kabbalah", "kabbalistic", "tree of life", "numerology",
+    "gematria", "demiurge", "archon", "archons", "gnostic", "sacred geometry",
+    "age of aquarius", "age of pisces", "zodiac age", "hermetic",
+)
+
+_ATTACK_FIRE = _kw(
+    "exploit", "exploitation", "attack vector", "attack surface",
+    "buffer overflow", "how do hackers", "how hackers", "how to hack",
+    "red team", "red-team", "penetration test", "pentest", "zero-day",
+    "zero day", "payload", "reverse engineer", "malware analysis", "kill chain",
+    "privilege escalation", "use-after-free",
+)
+
+_INFLUENCE_FIRE = _kw(
+    "persuade", "persuasion", "influence", "manipulate", "manipulation",
+    "manipulative", "rhetoric", "convince", "propaganda", "social engineering",
+    "social-engineering", "gaslighting", "trigger words", "amygdala",
+    "how to convince", "win the argument", "psychological tactics",
+)
+
+_IDENTITY_FIRE = _kw(
+    "who are you", "what are you", "your identity", "your name", "your purpose",
+    "your worldview", "zophiel", "ghost chain", "intelligence of the north",
+    "aureon truth engine", "what is your mission", "as zophiel", "are you aureon",
+    "simulation theory",
+)
+
+# Greetings / small talk / phatic input -> answer like a person, recruit nothing
+# heavy, drop the numbered-list contract.
+_CASUAL_FIRE = re.compile(
+    r"^\s*(hi|hey+|hello|yo|sup|wassup|wyd|hiya|howdy|"
+    r"how are you|how are u|how r u|how you doing|how's it going|hows it going|"
+    r"how have you been|how you been|you good|u good|you ok|you okay|"
+    r"what's up|whats up|what up|good morning|good afternoon|good evening|"
+    r"good night|gm|gn|nice to meet you|how do you do|how are things|"
+    r"thanks|thank you|thx|ty|cheers|appreciate it|"
+    r"lol|haha|ok|okay|cool|nice|great|gotcha)"
+    r"[\s!.,?]*$",
+    re.IGNORECASE,
+)
+
 
 @dataclass
 class BrainSpec:
@@ -263,6 +338,21 @@ BRAINS: list[BrainSpec] = [
         extra_fire=_butterfly_boost,
     ),
     BrainSpec(
+        id="code_engine_tcap",
+        title="Code Engine (TCAP)",
+        doctrine=doctrines.CODE_ENGINE_TCAP,
+        priority=22,
+        fire=_CODE_FIRE,
+        extra_fire=_narrative_forge_boost,
+    ),
+    BrainSpec(
+        id="adversary_redteam",
+        title="Adversary Red-Team (defensive)",
+        doctrine=doctrines.ADVERSARY_REDTEAM,
+        priority=23,
+        fire=_ATTACK_FIRE,
+    ),
+    BrainSpec(
         id="synthesis_engine",
         title="Synthesis Engine",
         doctrine=doctrines.SYNTHESIS_ENGINE,
@@ -270,6 +360,41 @@ BRAINS: list[BrainSpec] = [
         fire=_DECODE_FIRE,
         # A decode request on pure code/comedy should defer to those regions.
         dormant_when=("comedy",),
+    ),
+    BrainSpec(
+        id="temporal_prediction",
+        title="Temporal Prediction",
+        doctrine=doctrines.TEMPORAL_PREDICTION,
+        priority=31,
+        fire=_FORECAST_FIRE,
+    ),
+    BrainSpec(
+        id="pisp_planning",
+        title="PISP Planning",
+        doctrine=doctrines.PISP_PLANNING,
+        priority=32,
+        fire=_PLANNING_FIRE,
+    ),
+    BrainSpec(
+        id="entity_resolution_cerp",
+        title="Entity Resolution (CERP)",
+        doctrine=doctrines.ENTITY_RESOLUTION_CERP,
+        priority=33,
+        fire=_DECISION_FIRE,
+    ),
+    BrainSpec(
+        id="stoic_ethics",
+        title="Stoic Ethics",
+        doctrine=doctrines.STOIC_ETHICS,
+        priority=34,
+        fire=_ETHICS_FIRE,
+    ),
+    BrainSpec(
+        id="influence_linguistics",
+        title="Influence Linguistics (defensive)",
+        doctrine=doctrines.INFLUENCE_LINGUISTICS,
+        priority=35,
+        fire=_INFLUENCE_FIRE,
     ),
     BrainSpec(
         id="comedy",
@@ -295,11 +420,32 @@ BRAINS: list[BrainSpec] = [
         fire=_CONSCIOUSNESS_FIRE,
     ),
     BrainSpec(
+        id="abductive_wisdom",
+        title="Abductive Wisdom",
+        doctrine=doctrines.ABDUCTIVE_WISDOM,
+        priority=53,
+        fire=_WISDOM_FIRE,
+    ),
+    BrainSpec(
+        id="biblical_occult_symbolism",
+        title="Biblical & Occult Symbolism",
+        doctrine=doctrines.BIBLICAL_OCCULT_SYMBOLISM,
+        priority=54,
+        fire=_SCRIPTURE_FIRE,
+    ),
+    BrainSpec(
         id="vedic_astrology",
         title="Vedic Astrology",
         doctrine=doctrines.VEDIC_ASTROLOGY,
         priority=55,
         fire=_ASTROLOGY_FIRE,
+    ),
+    BrainSpec(
+        id="zophiel_core",
+        title="Zophiel Core Identity",
+        doctrine=doctrines.ZOPHIEL_CORE,
+        priority=56,
+        fire=_IDENTITY_FIRE,
     ),
     BrainSpec(
         id="emotional_persona",
@@ -399,14 +545,28 @@ def compose(
     order = {b.id: i for i, b in enumerate(BRAINS)}
     active.sort(key=lambda d: order[d.id])
 
+    scanned = _scan_text(text)
     parts = [doctrines.BASE_IDENTITY]
 
-    if _DISTRESS_FIRE.search(_scan_text(text)):
+    if _DISTRESS_FIRE.search(scanned):
         parts.append(
             "SAFETY OVERRIDE — The user may be in genuine distress. Drop every "
             "persona and stylistic doctrine. Respond as a calm, grounded, "
             "supportive presence. Wellbeing comes before voice, format, or "
             "cleverness."
+        )
+
+    # Greeting / small talk with nothing substantive recruited -> talk like a
+    # person. No numbered list, no doctrine machinery, just a natural reply.
+    on_demand_active = any(
+        d.fired and not _BRAINS_BY_ID[d.id].always_on for d in active
+    )
+    if _CASUAL_FIRE.match(scanned) and not on_demand_active:
+        parts.append(
+            "CONVERSATIONAL MODE — This is casual conversation, not a task. "
+            "Reply the way a person would to a friend: short, warm, natural. "
+            "NO numbered list, NO analysis, NO headers, NO mention of brains or "
+            "process. Just answer the human."
         )
 
     active_titles = ", ".join(d.title for d in active) or "base voice only"
